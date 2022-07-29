@@ -22,7 +22,13 @@ Users
     @cannot('user')
         <div class="card">
             <div class="card-header">
-                <i class="ik ik-plus-square" onclick="addUserPage()" data-toggle="modal" data-target="#demoModal"></i>Tambah Data
+                <div class="row">
+                    <div class="col-md-6"><i class="ik ik-plus-square" onclick="addUserPage()" data-toggle="modal" data-target="#demoModal"></i>Tambah Data</div>
+                    @can('admin')
+                    <div class="col-md-3"><a class="btn btn-danger" style="color:white">Export PDF</a></div>
+                    <div class="col-md-3"><a class="btn btn-success" style="color:white">Export Excel</a></div>
+                    @endcan
+                </div>
             </div>
         </div>
     @endcannot
@@ -36,7 +42,7 @@ Users
                             <table class="table table-bordered" id="data-table" style="width: 102%">
                                 <thead>
                                     <tr>
-                                        <th style="width: 3%"></th>
+                                        {{-- <th style="width: 3%"></th> --}}
                                         <th>Email</th>
                                         <th>Name</th>
                                         <th>Role</th>
@@ -44,7 +50,7 @@ Users
                                 </thead>
                                 <tfoot>
                                     <tr>
-                                        <td style="width: 3%"></td>
+                                        {{-- <td style="width: 3%"></td> --}}
                                         <th>Email</th>
                                         <th>Name</th>
                                         <th>Role</th>
@@ -175,12 +181,7 @@ var table = $('#data-table').DataTable({
                 );
             },
             ajax: "{{ route('users.index') }}",
-            columns: [{
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false
-                },
+            columns: [
                 {
                     data: 'email',
                     name: 'email'

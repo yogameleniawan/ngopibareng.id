@@ -33,6 +33,7 @@ class PdfExportJob implements ShouldQueue
      */
     public function handle()
     {
+
         $pdf = PDF::loadView('export.pdf', ['users' => $this->users])->setPaper('legal', 'portrait');
         $fileName = 'export.pdf';
         $pdfFilePath = 'results/' . $fileName;

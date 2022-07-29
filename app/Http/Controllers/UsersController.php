@@ -148,8 +148,9 @@ class UsersController extends Controller
 
     public function exportPDF()
     {
-        $users = User::take(10)->get();
-        PdfExportJob::dispatch($users);
+        User::chunk(1000, function ($users) {
+            PdfExportJob::dispatch($users);
+        });
 
         return response()->json(['message' => 'Export Complete'], 200);
     }

@@ -129,4 +129,10 @@ class UsersController extends Controller
             return response()->json(['message' => 'User failed to delete'], 500);
         }
     }
+
+    public function exportPDF()
+    {
+        $pdf = PDF::loadView('pdf.invoice', $data);
+        return $pdf->download('invoice.pdf');
+    }
 }

@@ -28,4 +28,5 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
     Route::resources(['users' => UsersController::class]);
+    Route::get('/export-pdf', [UsersController::class, 'exportPDF'])->name('exportPDF');
 });

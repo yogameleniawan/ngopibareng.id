@@ -25,7 +25,7 @@ Users
                 <div class="row">
                     <div class="col-md-6"><i class="ik ik-plus-square" onclick="addUserPage()" data-toggle="modal" data-target="#demoModal"></i>Tambah Data</div>
                     @can('admin')
-                    <div class="col-md-3"><a class="btn btn-danger" style="color:white">Export PDF</a></div>
+                    <div class="col-md-3"><a class="btn btn-danger" style="color:white" href="{{route('exportPDF')}}" target="_blank">Export PDF</a></div>
                     <div class="col-md-3"><a class="btn btn-success" style="color:white">Export Excel</a></div>
                     @endcan
                 </div>

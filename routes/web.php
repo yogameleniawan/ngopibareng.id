@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,9 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Auth::routes();
+
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/admin', function () {
+    echo "Admin";
+})->name('admin');
+
+Route::get('/user', function () {
+    echo "User";
+})->name('user');
+
+Route::get('/mod', function () {
+    echo "mod";
+})->name('mod');
 
 Route::middleware([
     'auth:sanctum',

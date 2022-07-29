@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserLevel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -27,10 +28,14 @@ class UsersController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
-
-                    $btn = '<td class="dropdown"><div class="ik ik-more-vertical dropdown-toggle" data-toggle="dropdown"></div><ul class="dropdown-menu" role="menu"><a class="dropdown-item edit-table" onclick="editUserPage(`' . $data->id . '`,`' . $data->email . '`,`' . $data->name . '`,`' . $data->biodata . '`,`' . $data->role . '`)" data-toggle="modal" data-target="#demoModal"><li> <i class="ik ik-edit" style="color: white;font-size:16px;padding-right:5px"></i><span style="font-size:14px">Edit</span></li></a><a class="dropdown-item delete" onclick="deleteUserPage(`' . $data->id . '`,`' . $data->email . '`,`' . $data->name . '`,`' . $data->biodata . '`,`' . $data->role . '`)" data-toggle="modal"
-                    data-target="#demoModal" data-id=' . $data->id . '><li><i class="ik ik-trash-2" style="color: white;font-size:16px;padding-right:5px"></i><span style="font-size:14px"> Delete</span></li></a></ul></td>';
-                    return $btn;
+                    if (Auth::user()->role == 'user') {
+                        $btn = '<td class="dropdown"><div class="ik ik-more-vertical dropdown-toggle" data-toggle="dropdown"></div><ul class="dropdown-menu" role="menu"><a class="dropdown-item edit-table" onclick="viewUserPage(`' . $data->id . '`,`' . $data->email . '`,`' . $data->name . '`,`' . $data->biodata . '`,`' . $data->role . '`)" data-toggle="modal" data-target="#demoModal"><li> <i class="ik ik-edit" style="color: white;font-size:16px;padding-right:5px"></i><span style="font-size:14px">View</span></li></a></ul></td>';
+                        return $btn;
+                    } else {
+                        $btn = '<td class="dropdown"><div class="ik ik-more-vertical dropdown-toggle" data-toggle="dropdown"></div><ul class="dropdown-menu" role="menu"><a class="dropdown-item edit-table" onclick="editUserPage(`' . $data->id . '`,`' . $data->email . '`,`' . $data->name . '`,`' . $data->biodata . '`,`' . $data->role . '`)" data-toggle="modal" data-target="#demoModal"><li> <i class="ik ik-edit" style="color: white;font-size:16px;padding-right:5px"></i><span style="font-size:14px">Edit</span></li></a><a class="dropdown-item delete" onclick="deleteUserPage(`' . $data->id . '`,`' . $data->email . '`,`' . $data->name . '`,`' . $data->biodata . '`,`' . $data->role . '`)" data-toggle="modal"
+                        data-target="#demoModal" data-id=' . $data->id . '><li><i class="ik ik-trash-2" style="color: white;font-size:16px;padding-right:5px"></i><span style="font-size:14px"> Delete</span></li></a></ul></td>';
+                        return $btn;
+                    }
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -56,6 +61,8 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
+        $user = User::create($request->all());
+        return response()->json(['data' => $user], 200);
     }
 
     /**
@@ -77,8 +84,7 @@ class UsersController extends Controller
      */
     public function edit(User $user, $id)
     {
-        $data = User::find($id);
-        return view('admin.users.edit', compact('data'));
+        //
     }
 
     /**
@@ -90,12 +96,20 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $table = User::find($id);
+        $table = User::find($request->id);
+        $table->name = $request->name;
         $table->email = $request->email;
-        $table->password = $request->password;
+        if ($request->password == null) {
+            $table->password = $table->password;
+        } else {
+            $table->password = Hash::make($request->password);
+        }
+        $table->role = $request->role;
+        $table->biodata = $request->biodata;
         if ($table->save()) {
-            return redirect()->route('materi.index')
-                ->with('success', 'Users created successfully.');
+            return response()->json(['message' => 'User updated'], 200);
+        } else {
+            return response()->json(['message' => 'User failed to update'], 500);
         }
     }
 
@@ -110,7 +124,9 @@ class UsersController extends Controller
         $table = User::find($request->id);
 
         if ($table->delete()) {
-            return response()->json(['data' => $table], 200);
+            return response()->json(['data' => $table, 'message' => 'User deleted'], 200);
+        } else {
+            return response()->json(['message' => 'User failed to delete'], 500);
         }
     }
 }

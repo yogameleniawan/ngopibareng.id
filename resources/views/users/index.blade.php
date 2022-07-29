@@ -38,14 +38,16 @@ Users
                                     <tr>
                                         <th style="width: 3%"></th>
                                         <th>Email</th>
-                                        <th>Nama</th>
+                                        <th>Name</th>
+                                        <th>Role</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
                                     <tr>
                                         <td style="width: 3%"></td>
                                         <th>Email</th>
-                                        <th>Nama</th>
+                                        <th>Name</th>
+                                        <th>Role</th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -95,12 +97,12 @@ Users
                             </div>
 
                             <div class="form-group" id="name-form">
-                                <label>Nama</label>
+                                <label>Name</label>
                                 <div class="input-group">
                                     <span class="input-group-prepend">
                                         <label class="input-group-text"><i class="ik ik-edit-1"></i></label>
                                     </span>
-                                    <input type="text" class="form-control  " placeholder="Nama" id="name" name="name"
+                                    <input type="text" class="form-control  " placeholder="Name" id="name" name="name"
                                         required>
                                 </div>
                             </div>
@@ -187,6 +189,10 @@ var table = $('#data-table').DataTable({
                     data: 'name',
                     name: 'name'
                 },
+                {
+                    data: 'role',
+                    name: 'role'
+                },
 
             ]
         });
@@ -236,6 +242,7 @@ var table = $('#data-table').DataTable({
         let html = `<button id="user-btn-edit" type="button" class="btn btn-success" onclick="updateUser()">Update</button>`
         $('#action-btn').html(html)
         $('#password').prop('disabled', false)
+        $('#id').val(id)
         $('#email').val(email)
         $('#email').prop('disabled', false)
         $('#name').val(name)
@@ -248,9 +255,10 @@ var table = $('#data-table').DataTable({
 
     function deleteUserPage(id, email, name, biodata, role)
     {
-        let html = `<button id="user-btn-edit" type="button" class="btn btn-danger" onclick="deleteUser()">Delete</button>`
+        let html = `<button id="user-btn-delete" type="button" class="btn btn-danger" onclick="deleteUser()">Delete</button>`
         $('#action-btn').html(html)
         $('#password').prop('disabled', true)
+        $('#id').val(id)
         $('#email').val(email)
         $('#email').prop('disabled', true)
         $('#name').val(name)
@@ -261,6 +269,162 @@ var table = $('#data-table').DataTable({
         $('#select_role').prop('disabled', true)
     }
 
+    function viewUserPage(id, email, name, biodata, role)
+    {
+        let html = `<button id="user-btn-edit" type="button" class="btn btn-success" onclick="updateUser()">Update</button>`
+        $('#action-btn').html(html)
+        $('#password').prop('disabled', false)
+        $('#email').val(email)
+        $('#email').prop('disabled', false)
+        $('#name').val(name)
+        $('#name').prop('disabled', false)
+        $('#biodata').val(biodata)
+        $('#biodata').prop('disabled', false)
+        $('#select_role').prop('disabled', false)
+        $('#select_role').val(role).change()
+    }
+
 </script>
 
+
+<script>
+
+    function addUser()
+    {
+        $('#btn-loader').removeClass('d-none')
+        $('#user-btn-add').addClass('d-none')
+
+        $.ajax({
+            url : '{{route('users.store')}}',
+            type: "POST",
+            dataType: "json",
+            headers: {
+                'X-CSRF-TOKEN': `{{ csrf_token() }}`
+            },
+            data: {
+                'email': $('#email').val(),
+                'name': $('#name').val(),
+                'password': $('#password').val(),
+                'role': $('#select_role').val(),
+                'biodata': $('#biodata').val(),
+            },
+            statusCode: {
+                500: function(response) {
+                    console.log(response)
+                    $.toast({
+                        heading: 'Error',
+                        text: 'Pastikan data sudah diisi semua dan tidak ada yang kosong',
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        loaderBg: '#f2a654',
+                        position: 'bottom-right'
+                    })
+                    $('#btn-loader').addClass('d-none')
+                    $('#user-btn-add').removeClass('d-none')
+                },
+            },
+            success: function(data) {
+                $('#demoModal').modal('hide');
+                $("#form-user")[0].reset()
+                $('#btn-loader').addClass('d-none')
+                $('#user-btn-add').removeClass('d-none')
+                $.toast({
+                    heading: 'User Ditambahkan',
+                    text: 'Data user berhasil ditambahkan',
+                    position: 'bottom-right',
+                    icon: 'success',
+                    stack: false,
+                    loaderBg: '#f96868'
+                })
+                table.ajax.reload()
+            }
+        })
+    }
+
+    function updateUser()
+    {
+        $('#btn-loader').removeClass('d-none')
+        $('#user-btn-edit').addClass('d-none')
+
+        $.ajax({
+            url : '{{route('users.update','"id"')}}',
+            type: "PUT",
+            dataType: "json",
+            headers: {
+                'X-CSRF-TOKEN': `{{ csrf_token() }}`
+            },
+            data: {
+                'id': $('#id').val(),
+                'email': $('#email').val(),
+                'name': $('#name').val(),
+                'password': $('#password').val(),
+                'role': $('#select_role').val(),
+                'biodata': $('#biodata').val(),
+            },
+            statusCode: {
+                500: function(response) {
+                    console.log(response)
+                    $.toast({
+                        heading: 'Error',
+                        text: 'Pastikan data sudah diisi semua dan tidak ada yang kosong',
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        loaderBg: '#f2a654',
+                        position: 'bottom-right'
+                    })
+                    $('#btn-loader').addClass('d-none')
+                    $('#user-btn-add').removeClass('d-none')
+                },
+            },
+            success: function(data) {
+                $('#demoModal').modal('hide');
+                $("#form-user")[0].reset()
+                $('#btn-loader').addClass('d-none')
+                $('#user-btn-edit').removeClass('d-none')
+                $.toast({
+                    heading: 'User Diperbarui',
+                    text: 'Data user berhasil diperbarui',
+                    position: 'bottom-right',
+                    icon: 'success',
+                    stack: false,
+                    loaderBg: '#f96868'
+                })
+                table.ajax.reload()
+            }
+        })
+    }
+
+    function deleteUser()
+    {
+        $('#btn-loader').removeClass('d-none')
+        $('#user-btn-delete').addClass('d-none')
+
+        $.ajax({
+            url : '{{route('users.destroy','"id"')}}',
+            type: "DELETE",
+            dataType: "json",
+            headers: {
+                'X-CSRF-TOKEN': `{{ csrf_token() }}`
+            },
+            data: {
+                'id': $('#id').val(),
+            },
+            success: function(data) {
+                $('#demoModal').modal('hide');
+                $("#form-user")[0].reset()
+                $('#btn-loader').addClass('d-none')
+                $('#user-btn-delete').removeClass('d-none')
+                $.toast({
+                    heading: 'User Dihapus',
+                    text: 'Data user berhasil dihapus',
+                    position: 'bottom-right',
+                    icon: 'success',
+                    stack: false,
+                    loaderBg: '#f96868'
+                })
+                table.ajax.reload()
+            }
+        })
+    }
+</script>
 @endsection

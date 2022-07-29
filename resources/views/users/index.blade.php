@@ -25,7 +25,7 @@ Users
                 <div class="row">
                     <div class="col-md-6"><i class="ik ik-plus-square" onclick="addUserPage()" data-toggle="modal" data-target="#demoModal"></i>Tambah Data</div>
                     @can('admin')
-                    <div class="col-md-3"><a class="btn btn-danger" style="color:white" href="{{route('exportPDF')}}" target="_blank">Export PDF</a></div>
+                    <div class="col-md-3"><a class="btn btn-danger" style="color:white;text-align: -webkit-center;" onclick="exportPDF()" target="_blank"><div class="export-pdf-loader d-none"></div> <span id="text-pdf">Export PDF</span></a></div>
                     <div class="col-md-3"><a class="btn btn-success" style="color:white">Export Excel</a></div>
                     @endcan
                 </div>
@@ -166,7 +166,6 @@ Users
 <!-- /.content-wrapper -->
 @endsection
 @section('footer')
-<script src="{{ url('assets/admin/dynamictable/dynamitable.jquery.min.js') }}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 
@@ -424,6 +423,45 @@ var table = $('#data-table').DataTable({
                     loaderBg: '#f96868'
                 })
                 table.ajax.reload()
+            }
+        })
+    }
+</script>
+
+<script>
+    function exportPDF(){
+        $('.export-pdf-loader').removeClass('d-none')
+        $('#text-pdf').addClass('d-none')
+        $.ajax({
+            url : '{{route('exportPDF')}}',
+            type: "GET",
+            dataType: "json",
+            statusCode: {
+                500: function(response) {
+                    console.log(response)
+                    $.toast({
+                        heading: 'Error',
+                        text: 'Data tidak dapat diexport',
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        loaderBg: '#f2a654',
+                        position: 'bottom-right'
+                    })
+                    $('.export-pdf-loader').addClass('d-none')
+                    $('#text-pdf').removeClass('d-none')
+                },
+            },
+            success: function(data) {
+                $('.export-pdf-loader').addClass('d-none')
+                $('#text-pdf').removeClass('d-none')
+                $.toast({
+                    heading: 'PDF Exported',
+                    text: 'Data user berhasil diexport sebagai PDF',
+                    position: 'bottom-right',
+                    icon: 'success',
+                    stack: false,
+                    loaderBg: '#f96868'
+                })
             }
         })
     }

@@ -164,7 +164,6 @@
     <script src="{{url('assets/admin/plugins/amcharts/amcharts.js')}}"></script>
     <script src="{{url('assets/admin/plugins/amcharts/gauge.js')}}"></script>
     <script src="{{url('assets/admin/plugins/amcharts/serial.js')}}"></script>
-    <script src="{{url('assets/admin/plugins/amcharts/light.js')}}"></script>
     <script src="{{url('assets/admin/plugins/amcharts/animate.min.js')}}"></script>
     <script src="{{url('assets/admin/plugins/amcharts/pie.js')}}"></script>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\PdfExportJob;
 use App\Models\Level;
 use App\Models\User;
 use App\Models\UserLevel;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
+use PDF;
+use Faker\Factory as Faker;
 
 class UsersController extends Controller
 {
@@ -61,8 +64,21 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::create($request->all());
-        return response()->json(['data' => $user], 200);
+        $table = new User();
+        $table->name = $request->name;
+        $table->email = $request->email;
+        if ($request->password == null) {
+            $table->password = $table->password;
+        } else {
+            $table->password = Hash::make($request->password);
+        }
+        $table->role = $request->role;
+        $table->biodata = $request->biodata;
+        if ($table->save()) {
+            return response()->json(['message' => 'User added'], 200);
+        } else {
+            return response()->json(['message' => 'User failed to add'], 500);
+        }
     }
 
     /**
@@ -132,7 +148,9 @@ class UsersController extends Controller
 
     public function exportPDF()
     {
-        $pdf = PDF::loadView('pdf.invoice', $data);
-        return $pdf->download('invoice.pdf');
+        $users = User::take(10)->get();
+        PdfExportJob::dispatch($users);
+
+        return response()->json(['message' => 'Export Complete'], 200);
     }
 }

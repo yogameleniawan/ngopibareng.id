@@ -40,7 +40,7 @@ Users
                             <span>Download</span>
                         </a>
                     </div>
-                    <div class="col-md-4"><a class="btn btn-success" style="color:white">Export Excel</a></div>
+                    <div class="col-md-4"><a class="btn btn-success" style="color:white" onclick="exportExcel()" target="_blank">Export Excel</a></div>
                     @endcan
                 </div>
             </div>
@@ -550,6 +550,25 @@ var table = $('#data-table').DataTable({
                     $.toast({
                         heading: 'PDF Downloaded',
                         text: 'File PDF berhasil didownload',
+                        position: 'bottom-right',
+                        icon: 'success',
+                        stack: false,
+                        loaderBg: '#f96868'
+                    })
+            }
+        })
+    }
+
+    function exportExcel()
+    {
+        $.ajax({
+            url : '{{route('exportExcel')}}',
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                    $.toast({
+                        heading: 'Export Started',
+                        text: 'File Excel sedang proses diexport',
                         position: 'bottom-right',
                         icon: 'success',
                         stack: false,

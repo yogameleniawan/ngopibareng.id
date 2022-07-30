@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\UsersExport;
 use App\Jobs\PdfExportJob;
 use App\Models\Level;
 use App\Models\User;
@@ -18,6 +19,7 @@ use Yajra\DataTables\Facades\DataTables;
 use PDF;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 
 class UsersController extends Controller
@@ -196,5 +198,12 @@ class UsersController extends Controller
         }
         $export->delete();
         return response()->json(['message' => 'Deleted'], 200);
+    }
+
+    public function exportExcel()
+    {
+        $export = new UsersExport();
+        $export->queue('users.xlsx', 'public');
+        return response()->json(['code' => 'start'], 200);
     }
 }

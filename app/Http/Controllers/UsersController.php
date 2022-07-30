@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\PdfExportJob;
 use App\Models\Level;
 use App\Models\User;
+use App\Models\UserExport;
 use App\Models\UserLevel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -16,6 +17,8 @@ use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 use PDF;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\Storage;
+use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 
 class UsersController extends Controller
 {
@@ -148,10 +151,40 @@ class UsersController extends Controller
 
     public function exportPDF()
     {
-        User::chunk(1000, function ($users) {
-            PdfExportJob::dispatch($users);
+        $user_export = new UserExport();
+        $user_export->user_id = Auth::user()->id;
+        $user_export->type = 'pdf';
+        $user_export->save();
+
+        User::chunk(1000, function ($users, $i) {
+            PdfExportJob::dispatch($users, $i);
+
+            $result_export = UserExport::where('user_id', Auth::user()->id)->first();
+            $result_export->split = $i;
+            $result_export->save();
         });
 
         return response()->json(['message' => 'Export Complete'], 200);
+    }
+
+    public function checkPDF()
+    {
+        $export = UserExport::where('user_id', Auth::user()->id)->first();
+        if (Storage::disk('local')->exists("pdf/split/export$export->split.pdf")) {
+            $merger = PDFMerger::init();
+            for ($i = 1; $i <= $export->split; $i++) {
+                $merger->addPDF(storage_path("app/pdf/split/export$i.pdf"), 'all');
+            }
+            $merger->merge();
+            $merger->save(public_path('pdf/result/export.pdf'));
+
+            $result_export = UserExport::where('user_id', Auth::user()->id)->first();
+            $result_export->path = 'pdf/result/export.pdf';
+            $result_export->save();
+
+            return response()->json(['exist' => true, 'path' => $export->path], 200);
+        } else {
+            return response()->json(['exist' => false], 200);
+        }
     }
 }

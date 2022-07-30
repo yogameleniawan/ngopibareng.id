@@ -29,4 +29,5 @@ Route::middleware([
     })->name('dashboard');
     Route::resources(['users' => UsersController::class]);
     Route::get('/export-pdf', [UsersController::class, 'exportPDF'])->name('exportPDF');
+    Route::get('/checkPDF', [UsersController::class, 'checkPDF'])->name('checkPDF');
 });

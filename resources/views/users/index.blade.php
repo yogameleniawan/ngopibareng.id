@@ -25,7 +25,16 @@ Users
                 <div class="row">
                     <div class="col-md-6"><i class="ik ik-plus-square" onclick="addUserPage()" data-toggle="modal" data-target="#demoModal"></i>Tambah Data</div>
                     @can('admin')
-                    <div class="col-md-3"><a class="btn btn-danger" style="color:white;text-align: -webkit-center;" onclick="exportPDF()" target="_blank"><div class="export-pdf-loader d-none"></div> <span id="text-pdf">Export PDF</span></a></div>
+                    <div id="text-pdf" class="col-md-3">
+                    <a class="btn btn-danger" style="color:white;text-align: -webkit-center;" onclick="exportPDF()" target="_blank">
+                        <span>Export PDF</span>
+                    </a>
+                    </div>
+                    <div id="loader-pdf" class="col-md-3 d-none">
+                        <a class="btn btn-danger" style="color:white;text-align: -webkit-center;">
+                            <div class="export-pdf-loader"></div>
+                        </a>
+                    </div>
                     <div class="col-md-3"><a class="btn btn-success" style="color:white">Export Excel</a></div>
                     @endcan
                 </div>
@@ -168,6 +177,14 @@ Users
 @section('footer')
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
+
+<script>
+    $(document).ready(function (){
+        checkPDF();
+    })
+
+</script>
 
 <script type="text/javascript">
 var table = $('#data-table').DataTable({
@@ -430,7 +447,7 @@ var table = $('#data-table').DataTable({
 
 <script>
     function exportPDF(){
-        $('.export-pdf-loader').removeClass('d-none')
+        $('#loader-pdf').removeClass('d-none')
         $('#text-pdf').addClass('d-none')
         $.ajax({
             url : '{{route('exportPDF')}}',
@@ -447,12 +464,12 @@ var table = $('#data-table').DataTable({
                         loaderBg: '#f2a654',
                         position: 'bottom-right'
                     })
-                    $('.export-pdf-loader').addClass('d-none')
+                    $('#loader-pdf').addClass('d-none')
                     $('#text-pdf').removeClass('d-none')
                 },
             },
             success: function(data) {
-                $('.export-pdf-loader').addClass('d-none')
+                $('#loader-pdf').addClass('d-none')
                 $('#text-pdf').removeClass('d-none')
                 $.toast({
                     heading: 'PDF Exported',
@@ -465,5 +482,40 @@ var table = $('#data-table').DataTable({
             }
         })
     }
+
+    function checkPDF(){
+        $('#loader-pdf').removeClass('d-none')
+        $('#text-pdf').addClass('d-none')
+        $.ajax({
+            url : '{{route('checkPDF')}}',
+            type: "GET",
+            dataType: "json",
+            statusCode: {
+                500: function(response) {
+                    $('#loader-pdf').addClass('d-none')
+                    $('#text-pdf').removeClass('d-none')
+                },
+            },
+            success: function(data) {
+                if(data.exist == true)
+                {
+                    $('#loader-pdf').addClass('d-none')
+                    $('#text-pdf').removeClass('d-none')
+                    $.toast({
+                        heading: 'PDF Exported',
+                        text: 'Data user berhasil diexport sebagai PDF',
+                        position: 'bottom-right',
+                        icon: 'success',
+                        stack: false,
+                        loaderBg: '#f96868'
+                    })
+                }else{
+                    $('#loader-pdf').removeClass('d-none')
+                    $('#text-pdf').addClass('d-none')
+                }
+            }
+        })
+    }
 </script>
+
 @endsection

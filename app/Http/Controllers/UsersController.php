@@ -187,4 +187,14 @@ class UsersController extends Controller
             return response()->json(['exist' => false], 200);
         }
     }
+
+    public function deleteExportPDF()
+    {
+        $export = UserExport::where('user_id', Auth::user()->id)->first();
+        for ($i = 1; $i <= $export->split; $i++) {
+            unlink(storage_path("app/pdf/split/export$i.pdf"));
+        }
+        $export->delete();
+        return response()->json(['message' => 'Deleted'], 200);
+    }
 }

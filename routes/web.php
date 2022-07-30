@@ -30,4 +30,5 @@ Route::middleware([
     Route::resources(['users' => UsersController::class]);
     Route::get('/export-pdf', [UsersController::class, 'exportPDF'])->name('exportPDF');
     Route::get('/checkPDF', [UsersController::class, 'checkPDF'])->name('checkPDF');
+    Route::get('/deleteExportPDF', [UsersController::class, 'deleteExportPDF'])->name('deleteExportPDF');
 });

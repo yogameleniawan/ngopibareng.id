@@ -35,7 +35,7 @@ Users
                             <div class="export-pdf-loader"></div>
                         </a>
                     </div>
-                    <div id="download-pdf" class="col-md-3 d-none">
+                    <div id="download-pdf" class="col-md-3 d-none" onclick="deletePDF()">
                         <a id="download-link" class="btn btn-danger" style="color:white;text-align: -webkit-center;" target="_blank">
                             <span>Download</span>
                         </a>
@@ -522,6 +522,33 @@ var table = $('#data-table').DataTable({
                     $('#loader-pdf').removeClass('d-none')
                     $('#text-pdf').addClass('d-none')
                 }
+            }
+        })
+    }
+
+    function deletePDF(){
+        $.ajax({
+            url : '{{route('deleteExportPDF')}}',
+            type: "GET",
+            dataType: "json",
+            statusCode: {
+                500: function(response) {
+                    $('#loader-pdf').addClass('d-none')
+                    $('#text-pdf').removeClass('d-none')
+                },
+            },
+            success: function(data) {
+                    $('#loader-pdf').addClass('d-none')
+                    $('#text-pdf').removeClass('d-none')
+                    $('#download-pdf').addClass('d-none')
+                    $.toast({
+                        heading: 'PDF Downloaded',
+                        text: 'File PDF berhasil didownload',
+                        position: 'bottom-right',
+                        icon: 'success',
+                        stack: false,
+                        loaderBg: '#f96868'
+                    })
             }
         })
     }

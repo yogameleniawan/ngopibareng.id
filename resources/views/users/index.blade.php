@@ -23,24 +23,24 @@ Users
         <div class="card">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-md-6"><i class="ik ik-plus-square" onclick="addUserPage()" data-toggle="modal" data-target="#demoModal"></i>Tambah Data</div>
+                    <div class="col-md-4"><i class="ik ik-plus-square" onclick="addUserPage()" data-toggle="modal" data-target="#demoModal"></i></div>
                     @can('admin')
-                    <div id="text-pdf" class="col-md-3">
+                    <div id="text-pdf" class="col-md-4">
                     <a class="btn btn-danger" style="color:white;text-align: -webkit-center;" onclick="exportPDF()" target="_blank">
                         <span>Export PDF</span>
                     </a>
                     </div>
-                    <div id="loader-pdf" class="col-md-3 d-none">
+                    <div id="loader-pdf" class="col-md-4 d-none">
                         <a class="btn btn-danger" style="color:white;text-align: -webkit-center;">
                             <div class="export-pdf-loader"></div>
                         </a>
                     </div>
-                    <div id="download-pdf" class="col-md-3 d-none" onclick="deletePDF()">
+                    <div id="download-pdf" class="col-md-4 d-none" onclick="deletePDF()">
                         <a id="download-link" class="btn btn-danger" style="color:white;text-align: -webkit-center;" target="_blank">
                             <span>Download</span>
                         </a>
                     </div>
-                    <div class="col-md-3"><a class="btn btn-success" style="color:white">Export Excel</a></div>
+                    <div class="col-md-4"><a class="btn btn-success" style="color:white">Export Excel</a></div>
                     @endcan
                 </div>
             </div>
@@ -56,7 +56,7 @@ Users
                             <table class="table table-bordered" id="data-table" style="width: 102%">
                                 <thead>
                                     <tr>
-                                        {{-- <th style="width: 3%"></th> --}}
+                                        <th style="width: 3%"></th>
                                         <th>Email</th>
                                         <th>Name</th>
                                         <th>Role</th>
@@ -64,7 +64,7 @@ Users
                                 </thead>
                                 <tfoot>
                                     <tr>
-                                        {{-- <td style="width: 3%"></td> --}}
+                                        <td style="width: 3%"></td>
                                         <th>Email</th>
                                         <th>Name</th>
                                         <th>Role</th>
@@ -203,6 +203,12 @@ var table = $('#data-table').DataTable({
             },
             ajax: "{{ route('users.index') }}",
             columns: [
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
                 {
                     data: 'email',
                     name: 'email'

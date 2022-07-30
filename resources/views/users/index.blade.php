@@ -299,7 +299,7 @@ var table = $('#data-table').DataTable({
 
     function viewUserPage(id, email, name, biodata, role)
     {
-        let html = `<button id="user-btn-edit" type="button" class="btn btn-success" onclick="updateUser()">Update</button>`
+        let html = ``
         $('#action-btn').html(html)
         $('#password').prop('disabled', false)
         $('#email').val(email)

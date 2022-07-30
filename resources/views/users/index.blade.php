@@ -35,6 +35,11 @@ Users
                             <div class="export-pdf-loader"></div>
                         </a>
                     </div>
+                    <div id="download-pdf" class="col-md-3 d-none">
+                        <a id="download-link" class="btn btn-danger" style="color:white;text-align: -webkit-center;" target="_blank">
+                            <span>Download</span>
+                        </a>
+                    </div>
                     <div class="col-md-3"><a class="btn btn-success" style="color:white">Export Excel</a></div>
                     @endcan
                 </div>
@@ -500,7 +505,8 @@ var table = $('#data-table').DataTable({
                 if(data.exist == true)
                 {
                     $('#loader-pdf').addClass('d-none')
-                    $('#text-pdf').removeClass('d-none')
+                    $('#text-pdf').addClass('d-none')
+                    $('#download-pdf').removeClass('d-none')
                     $.toast({
                         heading: 'PDF Exported',
                         text: 'Data user berhasil diexport sebagai PDF',
@@ -509,6 +515,9 @@ var table = $('#data-table').DataTable({
                         stack: false,
                         loaderBg: '#f96868'
                     })
+                    var base_url = "{{ url('/') }}" + "/" + data.path;
+                    console.log(base_url);
+                    $('#download-link').attr("href", base_url)
                 }else{
                     $('#loader-pdf').removeClass('d-none')
                     $('#text-pdf').addClass('d-none')

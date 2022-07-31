@@ -40,12 +40,17 @@ Users
                             <span>Download</span>
                         </a>
                     </div>
-                    <div id="loader-excel" class="col-md-4 d-none">
+                    <div id="loader-excel" class="col-md-4 d-none" style="left: 20px;">
                         <a class="btn btn-success" style="color:white;text-align: -webkit-center;">
                             <div class="export-pdf-loader"></div>
                         </a>
                     </div>
-                    <div class="col-md-4" id="export-excel"><a class="btn btn-success" style="color:white" onclick="exportExcel()" target="_blank">Export Excel</a></div>
+                    <div id="download-excel" class="col-md-4 d-none" onclick="downloadExcel()">
+                        <a id="download-excel" class="btn btn-success" style="color:white;text-align: -webkit-center;" target="_blank">
+                            <span>Download</span>
+                        </a>
+                    </div>
+                    <div class="col-md-4 d-none" id="export-excel"><a class="btn btn-success" style="color:white" onclick="exportExcel()" target="_blank">Export Excel</a></div>
                     @endcan
                 </div>
             </div>
@@ -192,6 +197,7 @@ Users
 <script>
     $(document).ready(function (){
         checkPDF();
+        checkExcel();
     })
 
 </script>
@@ -583,6 +589,30 @@ var table = $('#data-table').DataTable({
                         stack: false,
                         loaderBg: '#f96868'
                     })
+            }
+        })
+    }
+
+    function checkExcel()
+    {
+        $('#loader-excel').removeClass('d-none')
+        $('#export-excel').addClass('d-none')
+        $('#download-excel').addClass('d-none')
+        $.ajax({
+            url : '{{route('checkExcel')}}',
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                if(data.code == 'exists')
+                {
+                    $('#loader-excel').addClass('d-none')
+                    $('#export-excel').addClass('d-none')
+                    $('#download-excel').removeClass('d-none')
+                } else {
+                    $('#loader-excel').addClass('d-none')
+                    $('#export-excel').removeClass('d-none')
+                    $('#download-excel').addClass('d-none')
+                }
             }
         })
     }

@@ -209,4 +209,15 @@ class UsersController extends Controller
 
         return response()->json(['code' => 'start'], 200);
     }
+
+    public function checkExcel()
+    {
+        $file = Storage::disk('local')->exists('public/users.xlsx');
+
+        if ($file) {
+            return response()->json(['code' => 'exists'], 200);
+        } else {
+            return response()->json(['code' => 'empty'], 200);
+        }
+    }
 }

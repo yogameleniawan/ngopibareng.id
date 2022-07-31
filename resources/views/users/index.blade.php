@@ -40,7 +40,12 @@ Users
                             <span>Download</span>
                         </a>
                     </div>
-                    <div class="col-md-4"><a class="btn btn-success" style="color:white" onclick="exportExcel()" target="_blank">Export Excel</a></div>
+                    <div id="loader-excel" class="col-md-4 d-none">
+                        <a class="btn btn-success" style="color:white;text-align: -webkit-center;">
+                            <div class="export-pdf-loader"></div>
+                        </a>
+                    </div>
+                    <div class="col-md-4" id="export-excel"><a class="btn btn-success" style="color:white" onclick="exportExcel()" target="_blank">Export Excel</a></div>
                     @endcan
                 </div>
             </div>
@@ -561,11 +566,15 @@ var table = $('#data-table').DataTable({
 
     function exportExcel()
     {
+        $('#loader-excel').removeClass('d-none')
+        $('#export-excel').addClass('d-none')
         $.ajax({
             url : '{{route('exportExcel')}}',
             type: "GET",
             dataType: "json",
             success: function(data) {
+                $('#loader-excel').addClass('d-none')
+                $('#export-excel').removeClass('d-none')
                     $.toast({
                         heading: 'Export Started',
                         text: 'File Excel sedang proses diexport',

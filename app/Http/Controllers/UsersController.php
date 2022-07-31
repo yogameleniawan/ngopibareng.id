@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\UsersExport;
+use App\Jobs\ExcelExportJob;
 use App\Jobs\PdfExportJob;
 use App\Models\Level;
 use App\Models\User;
@@ -202,8 +203,10 @@ class UsersController extends Controller
 
     public function exportExcel()
     {
-        $export = new UsersExport();
-        $export->queue('users.xlsx', 'public');
+        User::chunk(1000, function ($users, $i) {
+            ExcelExportJob::dispatch($users, $i);
+        });
+
         return response()->json(['code' => 'start'], 200);
     }
 }

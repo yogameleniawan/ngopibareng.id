@@ -603,6 +603,7 @@ var table = $('#data-table').DataTable({
             type: "GET",
             dataType: "json",
             success: function(data) {
+
                 if(data.code == 'exists')
                 {
                     $('#loader-excel').addClass('d-none')

@@ -220,4 +220,9 @@ class UsersController extends Controller
             return response()->json(['code' => 'empty'], 200);
         }
     }
+
+    public function download()
+    {
+        return response()->download(storage_path('app/public/users.xlsx'));
+    }
 }

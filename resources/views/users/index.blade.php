@@ -46,7 +46,7 @@ Users
                         </a>
                     </div>
                     <div id="download-excel" class="col-md-4 d-none" onclick="downloadExcel()">
-                        <a id="download-excel" class="btn btn-success" style="color:white;text-align: -webkit-center;" target="_blank">
+                        <a id="download-excel-link" class="btn btn-success" style="color:white;text-align: -webkit-center;" target="_blank">
                             <span>Download</span>
                         </a>
                     </div>
@@ -603,12 +603,13 @@ var table = $('#data-table').DataTable({
             type: "GET",
             dataType: "json",
             success: function(data) {
-
                 if(data.code == 'exists')
                 {
                     $('#loader-excel').addClass('d-none')
                     $('#export-excel').addClass('d-none')
                     $('#download-excel').removeClass('d-none')
+                    var base_url = "{{ route('download') }}";
+                    $('#download-excel-link').attr("href", base_url)
                 } else {
                     $('#loader-excel').addClass('d-none')
                     $('#export-excel').removeClass('d-none')

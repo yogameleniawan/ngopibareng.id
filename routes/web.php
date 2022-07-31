@@ -36,5 +36,6 @@ Route::middleware([
         Route::get('/deleteExportPDF', [UsersController::class, 'deleteExportPDF'])->name('deleteExportPDF');
         Route::get('/exportExcel', [UsersController::class, 'exportExcel'])->name('exportExcel');
         Route::get('/checkExcel', [UsersController::class, 'checkExcel'])->name('checkExcel');
+        Route::get('/download', [UsersController::class, 'download'])->name('download');
     });
 });
